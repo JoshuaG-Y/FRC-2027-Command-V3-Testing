@@ -17,17 +17,12 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
-import org.wpilib.vision.apriltag.AprilTagFieldLayout;
-import org.wpilib.vision.apriltag.AprilTagFields;
 import org.wpilib.system.Filesystem;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.CommandScheduler;
-import frc.robot.commands.AutoRoutines;
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Scheduler;
 import frc.robot.generated.TunerConstants;
-import frc.robot.util.FieldConstants;
 
 import java.io.IOException;
-import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -75,7 +70,6 @@ public class Robot extends LoggedRobot {
       case SIM:
         // Running a physics simulator, log to NT
         Logger.addDataReceiver(new NT4Publisher());
-        SimulatedArena.getInstance().resetFieldForAuto();
         break;
 
       case REPLAY:
@@ -109,13 +103,9 @@ public class Robot extends LoggedRobot {
 
     try {
         String path = Filesystem.getDeployDirectory()+"/fields/FRC-2026-Rebuilt.json";
-        FieldConstants.layout = new AprilTagFieldLayout(path);
     } catch (IOException e) {
         e.printStackTrace();
         System.out.println("Failed to load custom field defaulting to WPILib default");
-        if (FieldConstants.layout == null) {
-          FieldConstants.layout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-        }
     }
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -125,7 +115,6 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
-    AutoRoutines.periodic();
     robotContainer.periodic();
     // Optionally switch the thread to high priority to improve loop
     // timing (see the template project documentation for details)
@@ -136,7 +125,7 @@ public class Robot extends LoggedRobot {
     // finished or interrupted commands, and running subsystem periodic() methods.
     // This must be called from the robot's periodic block in order for anything in
     // the Command-based framework to work.
-    CommandScheduler.getInstance().run();
+    Scheduler.getDefault().run();
 
     // Return to non-RT thread priority (do not modify the first argument)
     // Threads.setCurrentThreadPriority(false, 10);
@@ -153,12 +142,12 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
+    // autonomousCommand = robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
-    if (autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(autonomousCommand);
-    }
+    // // schedule the autonomous command (example)
+    // if (autonomousCommand != null) {
+    //   CommandScheduler.getInstance().schedule(autonomousCommand);
+    // }
   }
 
   /** This function is called periodically during autonomous. */
@@ -171,9 +160,9 @@ public class Robot extends LoggedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
+    // if (autonomousCommand != null) {
+    //   autonomousCommand.cancel();
+    // }
   }
 
   /** This function is called once when teleop is enabled. */
@@ -190,7 +179,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void utilityInit() {
     // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
+    Scheduler.getDefault().cancelAll();
   }
 
   /** This function is called periodically during test mode. */
@@ -204,8 +193,6 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {
-    SimulatedArena.getInstance().simulationPeriodic();
-    Logger.recordOutput("Simulated Arena/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
-    Logger.recordOutput("Simulated Arena/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Arena"));
+    
   }
 }
