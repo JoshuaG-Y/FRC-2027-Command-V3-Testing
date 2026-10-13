@@ -16,13 +16,11 @@ package frc.robot;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.command3.Command;
+import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.GenericHID;
 import org.wpilib.driverstation.XboxController;
-import org.wpilib.command2.Command;
-import org.wpilib.command2.Commands;
-import org.wpilib.command2.button.CommandXboxController;
-import org.wpilib.command2.sysid.SysIdRoutine;
-import frc.robot.commands.AutoRoutines;
+import org.wpilib.driverstation.XboxController.Button;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -45,7 +43,7 @@ public class RobotContainer {
   private final Drive drive;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final Gamepad controller = new Gamepad(0);
 
   // Dashboard inputs
 
@@ -88,8 +86,6 @@ public class RobotContainer {
         break;
     }
 
-    AutoRoutines.setup(drive);
-
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -102,41 +98,41 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> controller.getRightX()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -controller.getLeftY(),
+    //         () -> -controller.getLeftX(),
+    //         () -> controller.getRightX()));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> (DriveCommands.getOrientationToTarget(drive.getPose(), new Pose2d(new Translation2d(11.863959, 7.411491399999999),Rotation2d.kZero)))));
+    // // Lock to 0° when A button is held
+    // controller
+    //     .getButtonPressed(Gamepad.Button.FACE_DOWN)
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> (DriveCommands.getOrientationToTarget(drive.getPose(), new Pose2d(new Translation2d(11.863959, 7.411491399999999),Rotation2d.kZero)))));
 
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // // Switch to X pattern when X button is pressed
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // // Reset gyro to 0° when B button is pressed
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
   }
 
   public void periodic() {
-    Logger.recordOutput("Targetting/Estimated Angle", new Pose2d(drive.getPose().getTranslation(), DriveCommands.getOrientationToTarget(drive.getPose(), new Pose2d(new Translation2d(11.863959, 7.411491399999999),Rotation2d.kZero))));
+    Logger.recordOutput("Targetting/Estimated Angle", new Pose2d(drive.getPose().getTranslation(), DriveCommands.getOrientationToTarget(drive.getPose(), new Pose2d(new Translation2d(11.863959, 7.411491399999999),Rotation2d.ZERO))));
   }
 
   /**
@@ -145,7 +141,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
-    // return AutoRoutines.runPath("Cooked Testing Path");
+    return Command.noRequirements(_ -> System.out.println("output"))
+           .named("Debug Print");
   }
 }

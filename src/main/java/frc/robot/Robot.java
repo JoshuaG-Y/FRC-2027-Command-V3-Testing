@@ -101,12 +101,12 @@ public class Robot extends LoggedRobot {
       }
     }
 
-    try {
-        String path = Filesystem.getDeployDirectory()+"/fields/FRC-2026-Rebuilt.json";
-    } catch (IOException e) {
-        e.printStackTrace();
-        System.out.println("Failed to load custom field defaulting to WPILib default");
-    }
+    // try {
+    //     String path = Filesystem.getDeployDirectory()+"/fields/FRC-2026-Rebuilt.json";
+    // } catch (IOException e) {
+    //     e.printStackTrace();
+    //     System.out.println("Failed to load custom field defaulting to WPILib default");
+    // }
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();

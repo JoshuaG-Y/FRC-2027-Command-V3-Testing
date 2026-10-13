@@ -12,7 +12,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModulePosition;
-import org.wpilib.math.kinematics.SwerveModuleState;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
 import org.wpilib.math.util.Units;
 import org.wpilib.util.Alert;
 import org.wpilib.util.Alert.Level;
@@ -41,13 +41,17 @@ public class Module {
     this.constants = constants;
     driveDisconnectedAlert =
         new Alert(
+            "Module" + Integer.toString(index) + "DriveDisconnected",
             "Disconnected drive motor on module " + Integer.toString(index) + ".",
             Level.HIGH);
     turnDisconnectedAlert =
         new Alert(
-            "Disconnected turn motor on module " + Integer.toString(index) + ".", Level.HIGH);
+            "Module" + Integer.toString(index) + "TurnDisconnected",
+            "Disconnected turn motor on module " + Integer.toString(index) + ".",
+            Level.HIGH);
     turnEncoderDisconnectedAlert =
         new Alert(
+            "Module" + Integer.toString(index) + "TurnEncoderDisconnected",
             "Disconnected turn encoder on module " + Integer.toString(index) + ".",
             Level.HIGH);
   }
@@ -71,21 +75,21 @@ public class Module {
     turnEncoderDisconnectedAlert.set(!inputs.turnEncoderConnected);
   }
 
-  /** Runs the module with the specified setpoint state. Mutates the state to optimize it. */
-  public void runSetpoint(SwerveModuleState state) {
+  /** Runs the module with the specified setpoint state. Returns the optimized setpoint. */
+  public SwerveModuleVelocity runSetpoint(SwerveModuleVelocity state) {
     // Optimize velocity setpoint
-    state.optimize(getAngle());
-    state.cosineScale(inputs.turnPosition);
+    var optimizedState = state.optimize(getAngle()).cosineScale(inputs.turnPosition);
 
     // Apply setpoints
-    io.setDriveVelocity(state.velocity / constants.WheelRadius);
-    io.setTurnPosition(state.angle);
+    io.setDriveVelocity(optimizedState.velocity / constants.WheelRadius);
+    io.setTurnPosition(optimizedState.angle);
+    return optimizedState;
   }
 
   /** Runs the module with the specified output while controlling to zero degrees. */
   public void runCharacterization(double output) {
     io.setDriveOpenLoop(output);
-    io.setTurnPosition(Rotation2d.kZero);
+    io.setTurnPosition(Rotation2d.ZERO);
   }
 
   /** Disables all outputs to motors. */
@@ -115,8 +119,8 @@ public class Module {
   }
 
   /** Returns the module state (turn angle and drive velocity). */
-  public SwerveModuleState getState() {
-    return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
+  public SwerveModuleVelocity getState() {
+    return new SwerveModuleVelocity(getVelocityMetersPerSec(), getAngle());
   }
 
   /** Returns the module positions received this cycle. */

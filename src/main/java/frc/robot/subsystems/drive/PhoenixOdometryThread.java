@@ -11,7 +11,8 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.StatusSignal;
 import org.wpilib.units.measure.Angle;
-import org.wpilib.system.RobotController;
+import org.wpilib.hardware.bus.CANPort;
+import org.wpilib.system.Timer;
 import frc.robot.generated.TunerConstants;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class PhoenixOdometryThread extends Thread {
   private final List<Queue<Double>> timestampQueues = new ArrayList<>();
 
   private static boolean isCANFD =
-      new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD();
+      new CANBus(CANPort.CAN_S2).isNetworkFD();
   private static PhoenixOdometryThread instance = null;
 
   public static PhoenixOdometryThread getInstance() {
@@ -133,7 +134,7 @@ public class PhoenixOdometryThread extends Thread {
         // Sample timestamp is current FPGA time minus average CAN latency
         //     Default timestamps from Phoenix are NOT compatible with
         //     FPGA timestamps, this solution is imperfect but close
-        double timestamp = RobotController.getFPGATime() / 1e6;
+        double timestamp = Timer.getTimestamp();
         double totalLatency = 0.0;
         for (BaseStatusSignal signal : phoenixSignals) {
           totalLatency += signal.getTimestamp().getLatency();
