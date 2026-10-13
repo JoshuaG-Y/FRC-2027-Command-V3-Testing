@@ -20,7 +20,6 @@ import org.wpilib.command3.Command;
 import org.wpilib.driverstation.Gamepad;
 import org.wpilib.driverstation.GenericHID;
 import org.wpilib.driverstation.XboxController;
-import org.wpilib.driverstation.XboxController.Button;
 import frc.robot.commands.DriveCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
@@ -98,12 +97,12 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -controller.getLeftY(),
-    //         () -> -controller.getLeftX(),
-    //         () -> controller.getRightX()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -controller.getLeftY(),
+            () -> -controller.getLeftX(),
+            () -> controller.getRightX()));
 
     // // Lock to 0° when A button is held
     // controller

@@ -17,12 +17,10 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.DriveMotorArrangement;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.SteerMotorArrangement;
 
-import org.wpilib.system.Filesystem;
 import org.wpilib.command3.Command;
 import org.wpilib.command3.Scheduler;
 import frc.robot.generated.TunerConstants;
 
-import java.io.IOException;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;

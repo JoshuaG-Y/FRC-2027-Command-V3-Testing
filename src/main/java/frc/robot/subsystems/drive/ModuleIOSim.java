@@ -10,7 +10,6 @@ package frc.robot.subsystems.drive;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import org.wpilib.math.util.MathUtil;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.system.DCMotor;
